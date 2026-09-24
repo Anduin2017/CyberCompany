@@ -28,7 +28,6 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
-    image: cybercompany-poc-server:0.1
     restart: unless-stopped
     ports:
       - "127.0.0.1:${CYBERCOMPANY_PORT:-8765}:8000"
@@ -41,7 +40,6 @@ services:
       retries: 20
   manager:
     <<: *agent
-    image: cybercompany-poc-agent-manager:0.1
     environment:
       <<: *agent-env
       AGENT_NAME: manager
@@ -53,7 +51,6 @@ services:
       - ./data/views/manager/kanban:/home/agent/kanban:ro
   dev1:
     <<: *agent
-    image: cybercompany-poc-agent-dev1:0.1
     environment:
       <<: *agent-env
       AGENT_NAME: dev1
@@ -65,7 +62,6 @@ services:
       - ./data/views/dev1/kanban:/home/agent/kanban:ro
   dev2:
     <<: *agent
-    image: cybercompany-poc-agent-dev2:0.1
     environment:
       <<: *agent-env
       AGENT_NAME: dev2
@@ -77,7 +73,6 @@ services:
       - ./data/views/dev2/kanban:/home/agent/kanban:ro
   marketing:
     <<: *agent
-    image: cybercompany-poc-agent-marketing:0.1
     environment:
       <<: *agent-env
       AGENT_NAME: marketing
@@ -89,7 +84,6 @@ services:
       - ./data/views/marketing/kanban:/home/agent/kanban:ro
   pm:
     <<: *agent
-    image: cybercompany-poc-agent-pm:0.1
     environment:
       <<: *agent-env
       AGENT_NAME: pm
@@ -101,7 +95,6 @@ services:
       - ./data/views/pm/kanban:/home/agent/kanban:ro
   legal:
     <<: *agent
-    image: cybercompany-poc-agent-legal:0.1
     environment:
       <<: *agent-env
       AGENT_NAME: legal
@@ -113,7 +106,6 @@ services:
       - ./data/views/legal/kanban:/home/agent/kanban:ro
   security:
     <<: *agent
-    image: cybercompany-poc-agent-security:0.1
     environment:
       <<: *agent-env
       AGENT_NAME: security
@@ -125,7 +117,6 @@ services:
       - ./data/views/security/kanban:/home/agent/kanban:ro
   reviewer:
     <<: *agent
-    image: cybercompany-poc-agent-reviewer:0.1
     environment:
       <<: *agent-env
       AGENT_NAME: reviewer

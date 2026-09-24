@@ -26,10 +26,10 @@ cd CyberCompany
 mkdir -p secrets
 cp ~/.codex/auth.json secrets/auth.json
 chmod 600 secrets/auth.json
-docker compose up -d
+docker compose up
 ```
 
-Open <http://localhost:8765>. Compose builds the images on the first run. Click the envelope next to **manager**, send a message, and wait for a reply. If your user cannot access the Docker socket, prefix Compose commands with `sudo`.
+Open <http://localhost:8765>. That single `docker compose up` builds the CyberCompany application images locally from this repository, then starts the server and eight agents; no prebuilt CyberCompany images are distributed or required. Docker still downloads the base images and dependencies during the build. Click the envelope next to **manager**, send a message, and wait for a reply. If your user cannot access the Docker socket, prefix Compose commands with `sudo`.
 
 The first start creates a company lobby, a shared task board, and eight agent profiles. Every agent wakes once to inspect its saved work. This can use model tokens even before you send a message. Check container health with `docker compose ps`; if an agent does not reply, inspect `docker compose logs manager` and confirm its credentials and model access. Stop the company with `docker compose down`; the `data/` directory keeps its state.
 
