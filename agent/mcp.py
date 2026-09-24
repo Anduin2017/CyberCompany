@@ -39,6 +39,9 @@ for line in sys.stdin:
         msg=json.loads(line);method=msg.get('method');id=msg.get('id')
         if method=='initialize':result={'protocolVersion':msg.get('params',{}).get('protocolVersion','2024-11-05'),'capabilities':{'tools':{}},'serverInfo':{'name':'cybercompany','version':'0.1'}}
         elif method=='tools/list':result={'tools':[{'name':n,'description':desc,'inputSchema':{'type':'object','properties':props,'required':required}} for n,desc,props,required in TOOLS]}
+        elif method=='resources/list':result={'resources':[]}
+        elif method=='resources/templates/list':result={'resourceTemplates':[]}
+        elif method=='prompts/list':result={'prompts':[]}
         elif method=='tools/call':
             try:out=call(msg['params']['name'],msg['params'].get('arguments',{}));result={'content':[{'type':'text','text':json.dumps(out,ensure_ascii=False)}]}
             except Exception as e:result={'content':[{'type':'text','text':str(e)}],'isError':True}

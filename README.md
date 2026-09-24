@@ -14,20 +14,24 @@ The project is **experimental and local-only**. It has no user authentication. T
 
 ## Quick start
 
-Requirements: Docker with Compose, a Codex CLI login on the host, and access to the configured model. The default model is `gpt-6-luna` with `medium` reasoning effort; change these in `.env` if your account uses another model.
+Requirements: Docker with Compose, a Codex login on the host, and access to the configured model. The default model is `gpt-6-luna` with `medium` reasoning effort; change these in `.env` if your account uses another model.
 
-From this directory:
+Install the [Codex CLI](https://learn.chatgpt.com/docs/codex/cli) if needed, then run `codex login` and `codex login status`. This project needs the file-based login cache at `~/.codex/auth.json`. If Codex stored your login in a system keyring instead, set `cli_auth_credentials_store = "file"` in `~/.codex/config.toml` and sign in again. See the [official Codex authentication guide](https://learn.chatgpt.com/docs/auth) for the login and credential-storage options.
+
+Clone and start:
 
 ```bash
+git clone https://github.com/Anduin2017/CyberCompany.git
+cd CyberCompany
 mkdir -p secrets
 cp ~/.codex/auth.json secrets/auth.json
 chmod 600 secrets/auth.json
 docker compose up -d
 ```
 
-Open <http://localhost:8765>. Compose builds the images on the first run. If your user cannot access the Docker socket, prefix Compose commands with `sudo`.
+Open <http://localhost:8765>. Compose builds the images on the first run. Click the envelope next to **manager**, send a message, and wait for a reply. If your user cannot access the Docker socket, prefix Compose commands with `sudo`.
 
-The first start creates a company lobby, a shared task board, and eight agent profiles. Every agent wakes once to inspect its saved work. This can use model tokens even before you send a message. Stop the company with `docker compose down`; the `data/` directory keeps its state.
+The first start creates a company lobby, a shared task board, and eight agent profiles. Every agent wakes once to inspect its saved work. This can use model tokens even before you send a message. Check container health with `docker compose ps`; if an agent does not reply, inspect `docker compose logs manager` and confirm its credentials and model access. Stop the company with `docker compose down`; the `data/` directory keeps its state.
 
 Optional settings can be copied from [`.env.example`](.env.example) to `.env`:
 
