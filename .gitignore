@@ -1,0 +1,19 @@
+# Local credentials and runtime state
+/secrets/
+/data/
+/.env
+/.env.*
+!/.env.example
+
+# Generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+
+# Editor and temporary files
+.idea/
+.vscode/
+*.swp
+*~

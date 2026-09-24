@@ -1,0 +1,137 @@
+name: cybercompany-poc
+
+x-agent-env: &agent-env
+  COMPANY_URL: http://server:8000
+  CODEX_MODEL: ${CODEX_MODEL:-gpt-6-luna}
+  CODEX_REASONING_EFFORT: ${CODEX_REASONING_EFFORT:-medium}
+
+x-agent: &agent
+  build:
+    context: .
+    dockerfile: agent/Dockerfile
+  restart: unless-stopped
+  depends_on:
+    server:
+      condition: service_healthy
+  environment: *agent-env
+  mem_limit: 1536m
+  cpus: 2
+  pids_limit: 256
+  cap_drop: [ALL]
+  cap_add: [DAC_OVERRIDE]
+  security_opt: [no-new-privileges:true]
+  volumes:
+    - ${CODEX_AUTH_FILE:-./secrets/auth.json}:/run/secrets/codex-auth.json:ro
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    image: cybercompany-poc-server:0.1
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${CYBERCOMPANY_PORT:-8765}:8000"
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  manager:
+    <<: *agent
+    image: cybercompany-poc-agent-manager:0.1
+    environment:
+      <<: *agent-env
+      AGENT_NAME: manager
+    volumes:
+      - ${CODEX_AUTH_FILE:-./secrets/auth.json}:/run/secrets/codex-auth.json:ro
+      - ./data/agents/manager:/home/agent
+      - ./data/views/manager/chats:/home/agent/chats:ro
+      - ./data/views/manager/members:/home/agent/members:ro
+      - ./data/views/manager/kanban:/home/agent/kanban:ro
+  dev1:
+    <<: *agent
+    image: cybercompany-poc-agent-dev1:0.1
+    environment:
+      <<: *agent-env
+      AGENT_NAME: dev1
+    volumes:
+      - ${CODEX_AUTH_FILE:-./secrets/auth.json}:/run/secrets/codex-auth.json:ro
+      - ./data/agents/dev1:/home/agent
+      - ./data/views/dev1/chats:/home/agent/chats:ro
+      - ./data/views/dev1/members:/home/agent/members:ro
+      - ./data/views/dev1/kanban:/home/agent/kanban:ro
+  dev2:
+    <<: *agent
+    image: cybercompany-poc-agent-dev2:0.1
+    environment:
+      <<: *agent-env
+      AGENT_NAME: dev2
+    volumes:
+      - ${CODEX_AUTH_FILE:-./secrets/auth.json}:/run/secrets/codex-auth.json:ro
+      - ./data/agents/dev2:/home/agent
+      - ./data/views/dev2/chats:/home/agent/chats:ro
+      - ./data/views/dev2/members:/home/agent/members:ro
+      - ./data/views/dev2/kanban:/home/agent/kanban:ro
+  marketing:
+    <<: *agent
+    image: cybercompany-poc-agent-marketing:0.1
+    environment:
+      <<: *agent-env
+      AGENT_NAME: marketing
+    volumes:
+      - ${CODEX_AUTH_FILE:-./secrets/auth.json}:/run/secrets/codex-auth.json:ro
+      - ./data/agents/marketing:/home/agent
+      - ./data/views/marketing/chats:/home/agent/chats:ro
+      - ./data/views/marketing/members:/home/agent/members:ro
+      - ./data/views/marketing/kanban:/home/agent/kanban:ro
+  pm:
+    <<: *agent
+    image: cybercompany-poc-agent-pm:0.1
+    environment:
+      <<: *agent-env
+      AGENT_NAME: pm
+    volumes:
+      - ${CODEX_AUTH_FILE:-./secrets/auth.json}:/run/secrets/codex-auth.json:ro
+      - ./data/agents/pm:/home/agent
+      - ./data/views/pm/chats:/home/agent/chats:ro
+      - ./data/views/pm/members:/home/agent/members:ro
+      - ./data/views/pm/kanban:/home/agent/kanban:ro
+  legal:
+    <<: *agent
+    image: cybercompany-poc-agent-legal:0.1
+    environment:
+      <<: *agent-env
+      AGENT_NAME: legal
+    volumes:
+      - ${CODEX_AUTH_FILE:-./secrets/auth.json}:/run/secrets/codex-auth.json:ro
+      - ./data/agents/legal:/home/agent
+      - ./data/views/legal/chats:/home/agent/chats:ro
+      - ./data/views/legal/members:/home/agent/members:ro
+      - ./data/views/legal/kanban:/home/agent/kanban:ro
+  security:
+    <<: *agent
+    image: cybercompany-poc-agent-security:0.1
+    environment:
+      <<: *agent-env
+      AGENT_NAME: security
+    volumes:
+      - ${CODEX_AUTH_FILE:-./secrets/auth.json}:/run/secrets/codex-auth.json:ro
+      - ./data/agents/security:/home/agent
+      - ./data/views/security/chats:/home/agent/chats:ro
+      - ./data/views/security/members:/home/agent/members:ro
+      - ./data/views/security/kanban:/home/agent/kanban:ro
+  reviewer:
+    <<: *agent
+    image: cybercompany-poc-agent-reviewer:0.1
+    environment:
+      <<: *agent-env
+      AGENT_NAME: reviewer
+    volumes:
+      - ${CODEX_AUTH_FILE:-./secrets/auth.json}:/run/secrets/codex-auth.json:ro
+      - ./data/agents/reviewer:/home/agent
+      - ./data/views/reviewer/chats:/home/agent/chats:ro
+      - ./data/views/reviewer/members:/home/agent/members:ro
+      - ./data/views/reviewer/kanban:/home/agent/kanban:ro
